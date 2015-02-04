@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+		<link rel="stylesheet" type="text/css" href="css/main.css" />
+		<script src="lib/jquery-1.10.2.min.js"></script>
+		<script src="lib/bootstrap.js"></script>
+		<script src="js/prefixTree.js"></script>
+		<script src="js/app.js"></script>
+	</head>
+	<body>
+		
+		<header class="navbar navbar-default navbar-fixed-top">
+		  <div class="container">
+			<div class="navbar-header">
+			  <a href="#" class="navbar-brand">Book Parser</a>
+			  <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			  </button>
+			</div>
+			<div class="navbar-collapse collapse" id="navbar-main">
+			  <ul class="nav navbar-nav navbar-right">
+				<li><a href="http://builtwithbootstrap.com/" target="_blank">UI Template Built With Bootstrap</a></li>
+				<li><a href="https://wrapbootstrap.com/" target="_blank">WrapBootstrap</a></li>
+			  </ul>
+			</div>
+		  </div>
+		</header>
+
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="page-header"></div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="well">
+						<form class="bs-example form-horizontal">
+							<fieldset>
+								<legend>Current Book</legend>
+								<div class="form-group">
+									<label for="bookFile" class="col-lg-3 control-label">Book File</label>
+									<div class="col-lg-9">
+										<input type="file" class="form-control" id="bookFile" placeholder="book file" />
+									</div>
+								</div>
+								<div class="form-group" style="display: none;">
+									<label class="col-lg-3 control-label">Processing</label>
+									<div class="col-lg-9">
+										<div class="progress progress-striped active" style="margin-top: 9px;">
+											<div class="progress-bar" style="width: 45%"></div>
+										</div>
+									</div>
+								</div>
+								<div id="parseCmdWrap" class="form-group">
+									<div class="col-lg-9 col-lg-offset-3">
+										<button class="btn btn-primary" id='btnParse'>Parse Book</button>
+									</div>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Distinct words found</h3>
+						</div>
+						<div id='distinctWordsCnt' class="panel-body">1</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-12">
+					<ul id='wordList' class="list-group">
+						<li data-word-val="kaban" class="list-group-item">
+						  <span class="badge">41</span>
+						  kaban
+						</li>
+					</ul>
+				</div>
+			</div>
+			
+		</div>
+
+		<footer>
+		</footer>
+		<script type='text/javascript'>
+			$(function(){
+				//$('#bookFile').change(function(evt){
+				//	var files = evt.target.files;
+				//	console.log(files);
+				//});
+				
+				$('#btnParse').click(function(evt){
+					evt.preventDefault();
+					var file = $('#bookFile').get(0).files[0];
+					//console.log(file);
+					if (!file) {
+						alert('Please select a file!');
+						return;
+					}
+					
+					$('#parseCmdWrap').hide();
+					$('#bookFile').prop('disabled', true);
+					
+					var reader = new FileReader();
+					
+					reader.onloadend = function(evt) {
+						//console.log(evt.target);
+						if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+							Application.parseBook(evt.target.result);
+							Application.showWordList();
+						}
+					};
+					
+					reader.readAsText(file);
+				});
+				
+				$('#wordList').on('click', 'li[data-word-val]', function(evt){
+					//console.log(evt.target.tagName);
+					if (evt.target.tagName != 'LI') return;
+					Application.showHideOccurencesList($(this));
+				});
+			});
+		</script>
+	</body>
+</html>
